@@ -21,8 +21,8 @@ use std::time::Instant;
 fn main() {{
   let start = Instant::now();
 
-  // Your solution logic here...
   let answer = 42; // Replace with your calculated answer
+  // Your solution logic here...
 
   let duration = start.elapsed();
   println!("Problem {}: Answer = {{}}, Time: {{:?}}", answer, duration);
