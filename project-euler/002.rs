@@ -5,20 +5,20 @@
 use std::time::Instant;
 
 fn main() {
-    let start = Instant::now();
+  let start = Instant::now();
 
-    let mut answer = 0; // Replace with your calculated answer
-    let mut num1 = 1;
-    let mut num2 = 2;
-    while num2 < 4000000 {
-        if num2 % 2 == 0 {
-            answer += num2;
-        }
-        let next = num1 + num2;
-        num1 = num2;
-        num2 = next;
+  let mut answer = 0; // Replace with your calculated answer
+  let mut num1 = 1;
+  let mut num2 = 2;
+  while num2 < 4000000 {
+    if num2 % 2 == 0 {
+      answer += num2;
     }
+    let next = num1 + num2;
+    num1 = num2;
+    num2 = next;
+  }
 
-    let duration = start.elapsed();
-    println!("Problem 002: Answer = {}, Time: {:?}", answer, duration);
+  let duration = start.elapsed();
+  println!("Problem 002: Answer = {}, Time: {:?}", answer, duration);
 }
