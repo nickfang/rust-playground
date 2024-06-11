@@ -11,14 +11,18 @@ fn main() {
 
   fn check_palindrome(num: i64) -> bool {
     let num_str = num.to_string();
-    let // let num_str_len = num_str.len();
-    // for i in 0..(num_str_len + 1) / 2 {
-    //   if num_str.chars().nth(i) != num_str.chars().nth(num_str_len - 1 - i) {
-    //     return false;
-    //   }
-    // }
-    return;
-    true;
+    let len = num_str.len();
+    let mut end = num_str.len() / 2;
+    if num_str.len() % 2 != 0 {
+      end += 1;
+    }
+    let my_vec = num_str.as_bytes();
+    for i in 0..end {
+      if my_vec[i] != my_vec[len - 1 - i] {
+        return false;
+      }
+    }
+    true
   }
 
   let mut max: i64 = 0;
@@ -35,4 +39,5 @@ fn main() {
   answer = max;
   let duration = start.elapsed();
   println!("Problem 004: Answer = {}, Time: {:?}", answer, duration);
+  // 906609
 }
