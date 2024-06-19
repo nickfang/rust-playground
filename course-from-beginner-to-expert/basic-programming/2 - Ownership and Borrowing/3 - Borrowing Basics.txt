@@ -2,6 +2,15 @@
 // 	    Borrowing
 // -------------------------------------------
 /*
+
+- Establishing a reference to some Data
+  - Just like pointers with some rules
+  - Does not take ownership
+
+- Motivation for borrowing (why borrowing)
+  - Prevent unnecessary memory usage
+  - Ownership not required
+
 - Borrrowing Rules
     - At any time, you can have either one mutable reference or any number of immutable references.
     - References must always be valid.
@@ -13,13 +22,15 @@
 
 fn main() {
     let mut vec_1 = vec![4, 5, 6];
+    // let ref1 = &mut &vec_1;
+    // let ref2 = &mut &vec_1;  This doesn't work because it is the second mutable reference to vec_1
     let ref1 = &vec_1;
     let ref2 = &vec_1;
     println!("ref1: {:?}, ref2: {:?}", ref1, ref2);
     let ref3 = &mut vec_1;
 
     let vec_2 = {
-        let vec_3 = vec![1, 2, 3];
-        &vec_3
+        let vec_3 = vec![1, 2, 3];  // This vector is dropped outside the scope of {}
+        &vec_3  // This becomes a dangling reference which means that when vec_3 does not live long enough, nothing is assigned to vec_2 since vec_3 is dropped
     };
 }

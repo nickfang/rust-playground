@@ -4,7 +4,7 @@
 
 fn main() {
     let vec_1 = vec![1, 2, 3];
-    takes_ownership(vec_1.clone());
+    takes_ownership(vec_1.clone());  // passing a variable to a function usually means that the function is consuming the variable.
     println!("vec 1 is: {:?}", vec_1);
 
     let vec_2 = gives_onwership();
@@ -32,7 +32,7 @@ fn takes_and_gives_ownership(mut vec: Vec<i32>) -> Vec<i32> {
     vec
 }
 
-fn stack_function(mut var: i32) {
+fn stack_function(mut var: i32) {  // Primitive functions are copied so it does not transfer ownership.
     var = 56;
     println!("In func, var is: {var}");
 }

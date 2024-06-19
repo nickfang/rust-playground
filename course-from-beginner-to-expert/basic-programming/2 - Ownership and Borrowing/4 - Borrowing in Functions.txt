@@ -28,3 +28,147 @@ fn gives_onwership() -> Vec<i32> {
     vec![4, 5, 6]
 }
 
+
+
+// Problem 1: Fix the code below
+
+fn main() {
+    let mut some_vec = vec![1, 2, 3];
+    let first = get_first_element(&some_vec);
+    some_vec.push(4);
+    println!("The first number is: {}", first); // borrowing of some_vec is not finished until after this line.
+}
+
+fn get_first_element(num_vec: &Vec<i32>) -> &i32 {
+    &num_vec[0]
+}
+// Solution:
+fn main() {
+    let mut some_vec = vec![1, 2, 3];
+    let first = get_first_element(&some_vec);
+    //some_vec.push(4); //cannot borrow `some_vec` as mutable because it is also borrowed as immutable
+    println!("The first number is: {}", first);
+    some_vec.push(4);
+
+    /*
+    The problem with borrowing arises when we attempt to modify the some_vec vector
+    after obtaining an immutable reference to its first element.
+    This situation violates Rust's borrowing rules, which dictate that we cannot modify a variable
+    while immutable references to it are still in scope.
+
+    This rule ensures the safety and integrity of data in Rust,
+    preventing potential conflicts and data races
+    */
+}
+
+fn get_first_element(num_vec: &Vec<i32>) -> &i32 {
+    &num_vec[0]
+}
+
+/*
+The code you provided should work without any errors. However, there is a potential issue with the code logic that might not produce the expected result.
+
+In the main function, the code creates a mutable vector some_vec and initializes it with the values [1, 2, 3]. Then, it calls the get_first_element function, passing a reference to some_vec as an argument. The get_first_element function takes a reference to a vector num_vec and returns a reference to the first element of that vector.
+
+After calling get_first_element, the code adds a new element 4 to some_vec using the push method. Finally, it prints the value of first, which should be the first element of some_vec.
+
+The potential issue arises because the get_first_element function returns a reference to the first element of the vector. However, after the call to push, the vector some_vec is modified, which may cause the reference returned by get_first_element to become invalid. This is because adding an element to a vector may trigger a reallocation of memory, which could move the vector's elements to a new location in memory.
+
+To avoid this issue, you can modify the code to return the first element itself instead of a reference. This way, the value will be copied, and any subsequent modifications to the vector will not affect the result. Here's an updated version of the code:
+
+fn main() {
+    let mut some_vec = vec![1, 2, 3];
+    let first = get_first_element(&some_vec);
+    some_vec.push(4);
+    println!("The first number is: {}", first);
+}
+
+fn get_first_element(num_vec: &Vec<i32>) -> i32 {
+    num_vec[0]
+}
+
+In this updated code, the get_first_element function returns the first element directly, without using a reference. This ensures that the value is copied and remains unaffected by any modifications to the vector.
+*/
+/* Moving the line some_vec.push(4) down a line allows the code to compile because it avoids a borrowing issue.
+
+In the original code, the get_first_element function takes a reference to num_vec, which is a Vec<i32>. This means that get_first_element borrows num_vec rather than taking ownership of it. By borrowing num_vec, the function can access its elements without taking ownership and modifying it.
+
+However, when we call some_vec.push(4) before printing the value of first, we are attempting to modify some_vec while it is still being borrowed by the get_first_element function. This violates the borrowing rules of Rust, which prevent mutable and immutable borrows from coexisting.
+
+By moving some_vec.push(4) down a line, we ensure that the borrowing of some_vec is completed before modifying it. This way, the code compiles successfully because there are no conflicting borrows.
+
+Here's the modified code:
+
+fn main() {
+    let mut some_vec = vec![1, 2, 3];
+    let first = get_first_element(&some_vec);
+    println!("The first number is: {}", first);
+    some_vec.push(4);
+}
+
+fn get_first_element(num_vec: &Vec<i32>) -> &i32 {
+    &num_vec[0]
+}
+
+Now, the code compiles without any issues.
+/*
+
+
+// Problem 2: Fix the code so that it compiles.
+fn main() {
+    let mut vec_1 = vec![1, 2, 3];
+    let vec_2 = vec![4, 5, 6];
+    let mut vec_ptr: &Vec<i32>;
+    vec_ptr = vec_1;
+    println!("vec ptr is pointing to vec_1");
+    vec_ptr = vec_2;
+    println!("vec ptr is updated and now pointing to vec_2");
+}
+// Solution
+fn main() {
+    let mut vec_1 = vec![1, 2, 3];
+    let vec_2 = vec![4, 5, 6];
+    let mut vec_ptr: &Vec<i32>;
+    vec_ptr = &vec_1; // The type of vec_ptr is a reference to a vector so we should borrowing and not take ownership.
+    println!("vec ptr is pointing to vec_1");
+    vec_ptr = &vec_2; // We need to borrow using a reference and not take ownership.
+    println!("vec ptr is updated and now pointing to vec_2");
+}
+// My Solution
+fn main() {
+    let vec_1 = vec![1, 2, 3];
+    let vec_2 = vec![4, 5, 6];
+    let mut vec_ptr: &Vec<i32>;
+    vec_ptr = &vec_1;
+    println!("vec ptr is pointing to vec_1 {:?}", vec_ptr);
+    vec_ptr = &vec_2;
+    println!("vec ptr is updated and now pointing to vec_2 {:?}", vec_ptr);
+}
+
+
+//Problem 3: Fix the code so that it compiles.
+fn main() {
+    let first_num = 42;
+    let second_num = 64;
+    let ref1 = &mut first_num;
+    let mut ref2 = &mut second_num; // a mutable references means that the reference can be updated to point to some other variable
+
+    *ref1 = 15;
+    *ref2 = 10;
+    ref2 = ref1;
+
+    println!("Updated first number: {ref2}");
+}
+// Solution
+fn main() {
+    let mut first_num = 42; // we are using mutable references to it so the variable must be mutable
+    let mut second_num = 64; // we are using mutable references to it so the variable must be mutable
+    let ref1 = &mut first_num;
+    let mut ref2 = &mut second_num; // a mutable references means that the reference can be updated to point to some other variable
+
+    *ref1 = 15;
+    *ref2 = 10;
+    ref2 = ref1;
+
+    println!("Updated first number: {ref2}");
+}
