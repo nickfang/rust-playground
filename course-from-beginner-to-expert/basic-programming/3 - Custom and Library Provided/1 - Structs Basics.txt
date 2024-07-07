@@ -40,3 +40,111 @@ fn main() {
     // Unit Struct
     struct ABC;
 }
+
+
+
+//Problem 1: Modify the code by eliminating all the let statements
+struct Fruit {
+    apples: i32,
+    bananas: i32,
+}
+
+fn increase_fruit(fruit: Fruit) -> Fruit {
+    let fruit = Fruit {
+        apples: fruit.apples * 2,
+        bananas: fruit.bananas * 3,
+    };
+    fruit
+}
+
+fn new_fruit() -> Fruit {
+    let fruit = Fruit {
+        apples: 10,
+        bananas: 5,
+    };
+    fruit
+}
+
+fn print_fruit(fruit: Fruit) {
+    println!(
+        "You have {} apples and {} bananas",
+        fruit.apples, fruit.bananas
+    );
+}
+
+fn main() {
+    let some_fruit = new_fruit();
+    let updated_fruit = increase_fruit(some_fruit);
+    print_fruit(updated_fruit);
+}
+
+// Solution:
+struct Fruit {
+    apples: i32,
+    bananas: i32,
+}
+
+fn increase_fruit(fruit: Fruit) -> Fruit {
+    Fruit {
+        apples: fruit.apples * 2,
+        bananas: fruit.bananas * 3,
+    }
+}
+
+fn new_fruit() -> Fruit {
+    Fruit {
+        apples: 10,
+        bananas: 5,
+    }
+}
+
+fn print_fruit(fruit: Fruit) {
+    println!(
+        "You have {} apples and {} bananas",
+        fruit.apples, fruit.bananas
+    );
+}
+
+fn main() {
+    print_fruit(increase_fruit(new_fruit()));
+}
+
+// Problem 2: Fix the code by only changing the indicated line.
+struct Book {
+    title: String,
+    author: String,
+}
+
+fn main() {
+    let some_book = Book {
+        title: String::from("The Rust Programming Language"),
+        author: String::from("Steve Klabnik and Carol Nichols"),
+    };
+    print_book(some_book.title); // Fix this line
+
+    println!("Book name: {}", some_book.title);
+}
+
+fn print_book(book_name: String) {
+    println!("Book: {}", book_name);
+}
+//Solution:
+struct Book {
+    title: String,
+    author: String,
+}
+
+fn main() {
+    let some_book = Book {
+        title: String::from("The Rust Programming Language"),
+        author: String::from("Steve Klabnik and Carol Nichols"),
+    };
+    print_book(some_book.title.clone()); // Fix this line
+
+    println!("Book name: {}", some_book.title);
+    println!("Book author: {}", some_book.author);
+}
+
+fn print_book(book_name: String) {
+    println!("Book: {}", book_name);
+}
