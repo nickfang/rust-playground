@@ -40,11 +40,16 @@ mod tests {
     // }
 
     // I feel like this code looks better than the one above.  Is it more idiomatic?
-    let mut iter = optional_integers.into_iter().rev();
+    // let mut iter = optional_integers.into_iter().rev();
     while let Some(optional_integer) = optional_integers.pop() {
-      if let Some(integer) = optional_integer {
-        assert_eq!(integer, cursor);
-        cursor -= 1;
+      match optional_integer {
+        None => {
+          break;
+        }
+        Some(x) => {
+          assert_eq!(x, cursor);
+          cursor -= 1;
+        }
       }
     }
 
