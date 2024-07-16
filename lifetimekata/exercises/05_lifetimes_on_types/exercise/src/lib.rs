@@ -1,58 +1,61 @@
 use std::collections::HashSet;
 
 #[derive(Debug, Default)]
-pub struct Difference {
-    first_only: Vec<&str>,
-    second_only: Vec<&str>,
+pub struct Difference<'first, 'second> {
+  first_only: Vec<&'first str>,
+  second_only: Vec<&'second str>,
 }
 
-pub fn find_difference(sentence1: &str, sentence2: &str) -> Difference {
-    let sentence_1_words: HashSet<&str> = sentence1.split(" ").collect();
-    let sentence_2_words: HashSet<&str> = sentence2.split(" ").collect();
+pub fn find_difference<'sentence1, 'sentence2>(
+  sentence1: &'sentence1 str,
+  sentence2: &'sentence2 str
+) -> Difference<'sentence1, 'sentence2> {
+  let sentence_1_words: HashSet<&str> = sentence1.split(" ").collect();
+  let sentence_2_words: HashSet<&str> = sentence2.split(" ").collect();
 
-    let mut diff = Difference::default();
+  let mut diff = Difference::default();
 
-    for word in &sentence_1_words {
-        if !sentence_2_words.contains(word) {
-            diff.first_only.push(word)
-        }
+  for word in &sentence_1_words {
+    if !sentence_2_words.contains(word) {
+      diff.first_only.push(word);
     }
+  }
 
-    for word in &sentence_2_words {
-        if !sentence_1_words.contains(word) {
-            diff.second_only.push(word)
-        }
+  for word in &sentence_2_words {
+    if !sentence_1_words.contains(word) {
+      diff.second_only.push(word);
     }
+  }
 
-    diff.first_only.sort();
-    diff.second_only.sort();
+  diff.first_only.sort();
+  diff.second_only.sort();
 
-    diff
+  diff
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+  use super::*;
 
-    #[test]
-    fn main() {
-        let first_sentence = String::from("I hate the surf and the sand.");
-        let second_sentence = String::from("I love the surf and the sand.");
+  #[test]
+  fn main() {
+    let first_sentence = String::from("I hate the surf and the sand.");
+    let second_sentence = String::from("I love the surf and the sand.");
 
-        let first_only = {
-            let third_sentence = String::from("I love the snow and the sand.");
-            let diff = find_difference(&first_sentence, &third_sentence);
-            diff.first_only
-        };
+    let first_only = {
+      let third_sentence = String::from("I love the snow and the sand.");
+      let diff = find_difference(&first_sentence, &third_sentence);
+      diff.first_only
+    };
 
-        assert_eq!(first_only, vec!["hate", "surf"]);
+    assert_eq!(first_only, vec!["hate", "surf"]);
 
-        let second_only = {
-            let third_sentence = String::from("I love the snow and the sand.");
-            let diff = find_difference(&third_sentence, &second_sentence);
-            diff.second_only
-        };
+    let second_only = {
+      let third_sentence = String::from("I love the snow and the sand.");
+      let diff = find_difference(&third_sentence, &second_sentence);
+      diff.second_only
+    };
 
-        assert_eq!(second_only, vec!["surf"]);
-    }
+    assert_eq!(second_only, vec!["surf"]);
+  }
 }

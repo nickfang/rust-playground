@@ -11,8 +11,8 @@ use require_lifetimes::require_lifetimes;
 /// assert_eq!(identity(&x), &x);
 /// ````
 #[require_lifetimes(!)]
-pub fn identity(number: &i32) -> &i32 {
-    number
+pub fn identity<'a>(number: &'a i32) -> &'a i32 {
+  number
 }
 
 /// In this case, we know that if the option is `Some`, it will
@@ -47,23 +47,23 @@ pub fn identity(number: &i32) -> &i32 {
 /// assert_eq!(splitted, vec!["this", "is", "a", "test"]);
 /// ```
 #[require_lifetimes(!)]
-pub fn split(text: &str, delimiter: &str) -> Vec<&str> {
-    let mut last_split = 0;
-    let mut matches: Vec<&str> = vec![];
-    for i in 0..text.len() {
-        if i < last_split {
-            continue;
-        }
-        if text[i..].starts_with(delimiter) {
-            matches.push(&text[last_split..i]);
-            last_split = i + delimiter.len();
-        }
+pub fn split<'a, 'b>(text: &'a str, delimiter: &'b str) -> Vec<&'a str> {
+  let mut last_split = 0;
+  let mut matches: Vec<&str> = vec![];
+  for i in 0..text.len() {
+    if i < last_split {
+      continue;
     }
-    if last_split < text.len() {
-        matches.push(&text[last_split..]);
+    if text[i..].starts_with(delimiter) {
+      matches.push(&text[last_split..i]);
+      last_split = i + delimiter.len();
     }
+  }
+  if last_split < text.len() {
+    matches.push(&text[last_split..]);
+  }
 
-    matches
+  matches
 }
 
 /// Recall that this function returns `&number` if
@@ -120,10 +120,10 @@ pub fn split(text: &str, delimiter: &str) -> Vec<&str> {
 /// assert_eq!(&num, answer);
 /// ```
 #[require_lifetimes(!)]
-pub fn only_if_greater_hard(number: &i32, greater_than: &i32, otherwise: &i32) -> &i32 {
-    if number > greater_than {
-        number
-    } else {
-        otherwise
-    }
+pub fn only_if_greater_hard<'a, 'b>(
+  number: &'a i32,
+  greater_than: &'b i32,
+  otherwise: &'a i32
+) -> &'a i32 {
+  if number > greater_than { number } else { otherwise }
 }
