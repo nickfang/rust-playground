@@ -2,8 +2,8 @@
 // 	Enums
 // -------------------------------------------
 
-/* 
-// Example 1: 
+/*
+// Example 1:
 
 enum WeekDay {
     Monday,
@@ -56,4 +56,99 @@ fn main() {
         "Allowance of participant is: {}",
         participant.travel_allowance()
     );
+}
+
+
+// Problem 1: The elements in the vector must be of the same type. In this exercise, we will look at a way-out for storing elements of different types in a vector.
+#[derive(Debug)]
+enum Value {
+    // Add code here
+    // Define two variants of Integer and Float (with associated int and float types respectively)
+}
+
+fn main() {
+    let some_val = vec![Value::Integer(12), Value::Float(15.5)];
+
+    for i in some_val {
+        match i {
+            Value::Integer(num) => println!("Integer: {} ", num),
+            Value::Float(num) => println!("Float: {}", num),
+        }
+    }
+}
+
+// Solution:
+#[derive(Debug)]
+enum Value {
+    Integer(i32),
+    Float(f32),
+}
+
+fn main() {
+    let some_val = vec![Value::Integer(12), Value::Float(15.5)];
+
+    for i in some_val {
+        match i {
+            Value::Integer(num) => println!("Integer: {} ", num),
+            Value::Float(num) => println!("Float: {}", num),
+        }
+    }
+}
+
+
+// Problem 2:
+/* You are tasked with implementing a library management system using Rust.
+Your goal is to design a program that can handle books and magazines.
+To fulfill the requirements, follow the steps below:
+
+Create a structure called Item with the following fields:
+id: An integer representing the unique identifier of the item.
+title: A string representing the title of the item.
+year: An integer representing the publication year of the item.
+type: an enumeration type. The details are coming below.
+
+Create an enumeration called ItemType with two variants:
+Book: Represents a book.
+Magazine: Represents a magazine.
+
+Implement a function called display_item_info() that takes an Item as input
+and displays its information. The function should output
+the item's ID, title, publication year, and type (book or magazine).
+*/
+
+struct Item {
+    id: u32,
+    title: String,
+    year: u32,
+    type_: ItemType
+}
+#[derive(Debug)]
+enum ItemType {
+    Book,
+    Magazine,
+}
+impl Item {
+    fn display_item_info(&self) {
+        println!("Id: {:?}", self.id);
+        println!("Title: {:?}", self.title);
+        println!("Year: {:?}", self.year);
+        println!("Type: {:?}", self.type_);
+    }
+}
+
+fn main() {
+    let item = Item {
+        id: 1,
+        title: "Book Title".to_string(),
+        year: 2024,
+        type_: ItemType::Book,
+    };
+    item.display_item_info();
+    let item2 = Item {
+        id: 2,
+        title: "Magazine Title".to_string(),
+        year: 2024,
+        type_: ItemType::Magazine,
+    };
+    item2.display_item_info();
 }

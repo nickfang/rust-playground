@@ -1,0 +1,206 @@
+
+fn main() {
+  let some_vec: Vec<i32> = vec![5,5,8,8,1,0,1,5,5,5,5];
+  let mut freq_vec:HashMap<i32, u32> = HasMap::new();
+
+  for i: &i32 in &some_vec {
+    let freq: &mut u32 = freq_vec.entry(key: *i).or_insert(default:0);
+    *freq += 1;
+  }
+  println!("{:?}", freq_vec);
+}
+
+// Problem 1:
+/* In this exercise, you will be working on creating a student management system
+using Rust. The system should allow you to store and retrieve student information
+based on their unique ID. For ease of work, the student structure is already
+created in the code below
+
+Next, create a StudentManager structure containing a field of student, which
+will essentially be a hashmap where the key part will be an integer representing
+unique ID of student and the value part will be the complete details of the
+students contained in the student structure.
+
+The StudentManager should implement the following methods:
+1. new() -> Self: A constructor that initializes an empty student manager.
+
+2. add_student(&mut self, student: Student) -> Result<(), String>:
+Adds a student to the manager.
+If the student's ID already exists, return an error message.
+Otherwise, add the student to the manager and return Ok.
+
+3. get_student(&self, id: i32) -> Option<&Student>: Retrieves a student
+from the manager based on their ID.
+If the student is found, return Some(student). Otherwise, return None.
+
+Your task is to implement the StudentManager structure, and the mentioned methods.
+Additionally, provide a sample usage of the student management system by adding
+a few students and retrieving their information using the get_student() method.
+*/
+
+struct Student {
+    id: i32,
+    name: String,
+    grade: String,
+}
+
+fn main() {}
+// Solution
+use std::collections::HashMap;
+
+#[derive(Debug)]
+struct Student {
+    id: i32,
+    name: String,
+    grade: String,
+}
+
+#[derive(Debug)]
+struct StudentManager {
+    students: HashMap<i32, Student>,
+}
+
+impl StudentManager {
+    fn new() -> Self {
+        Self {
+            students: HashMap::new()
+        }
+    }
+    fn add_student(&mut self, student: Student) -> Result<(), String> {
+        self.students.entry(student.id).or_insert(student);
+        Ok(())
+    }
+    fn get_student(&self, id: i32) -> Option<&Student> {
+        // self.students.get(&id)
+        for (&student_id, student) in &self.students {
+            if student_id == id {
+                return Some(student);
+            }
+        }
+        return None
+
+    }
+
+}
+
+fn main() {
+    let mut sm = StudentManager::new();
+    let student1 = Student { id: 1, name: String::from("Malcolm"), grade: String::from("70") };
+    sm.add_student(student1);
+    let student2 = Student { id: 2, name: String::from("Zoe"), grade: String::from("100") };
+    sm.add_student(student2);
+    println!("{:?}", sm);
+    let student3 = sm.get_student(1);
+    println!("{:?}", student3.unwrap());
+}
+
+//Problem 2:
+/* The code below contains a student struct with three fields.
+Your taks is to create a hashmap called student_database in the main function,
+which will store instances of the Student structure. The keys of the hashmap
+should be unique student IDs, represented as integers while the values will be
+instances of the student struct.
+
+Implement a function called add_student() that takes the student's ID, name, age, and grade as parameters.
+The function should add a new entry to the student_database hashmap if the student ID doesn't already exist.
+If the student ID already exists in the hashmap, the function should not add a new entry.
+
+Use the skeleton of the function given below.
+*/
+
+use std::collections::HashMap;
+struct Student {
+    name: String,
+    age: i32,
+    grade: String,
+}
+
+fn add_student(
+    student_database: &mut HashMap<i32, Student>,
+    id: i32,
+    name: String,
+    age: i32,
+    grade: String,
+) {
+
+    // Your code here
+}
+
+fn main() {
+    let mut student_database: HashMap<i32, Student> = HashMap::new();
+    add_student(
+        &mut student_database,
+        1,
+        String::from("John"),
+        17,
+        String::from("Grade 11"),
+    );
+
+    add_student(
+        &mut student_database,
+        2,
+        String::from("Sarah"),
+        16,
+        String::from("Grade 10"),
+    );
+
+    // Printing the student database
+
+    for (id, student) in &student_database {
+        println!("Student ID: {}", id);
+        println!("Name: {}", student.name);
+        println!("Age: {}", student.age);
+        println!("Grade: {}", student.grade);
+        println!("------------------");
+    }
+}
+// Solutionuse std::collections::HashMap;
+struct Student {
+    name: String,
+    age: i32,
+    grade: String,
+}
+
+fn add_student(
+    student_database: &mut HashMap<i32, Student>,
+    id: i32,
+    name: String,
+    age: i32,
+    grade: String,
+) {
+    let new_student = Student {
+        name: name,
+        age: age,
+        grade: grade,
+    };
+    student_database.entry(id).or_insert(new_student);
+}
+
+fn main() {
+    let mut student_database: HashMap<i32, Student> = HashMap::new();
+    add_student(
+        &mut student_database,
+        1,
+        String::from("John"),
+        17,
+        String::from("Grade 11"),
+    );
+
+    add_student(
+        &mut student_database,
+        2,
+        String::from("Sarah"),
+        16,
+        String::from("Grade 10"),
+    );
+
+    // Printing the student database
+
+    for (id, student) in &student_database {
+        println!("Student ID: {}", id);
+        println!("Name: {}", student.name);
+        println!("Age: {}", student.age);
+        println!("Grade: {}", student.grade);
+        println!("------------------");
+    }
+}
