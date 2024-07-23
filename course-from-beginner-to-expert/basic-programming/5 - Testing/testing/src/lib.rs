@@ -56,4 +56,9 @@ mod tests {
   fn should_not_create_and_painc() {
     let some_circle = shapes::Circle::new_2(-11.0);
   }
+  #[test]
+  #[ignore]
+  fn ignored_test() {
+    assert!(true);
+  }
 }
