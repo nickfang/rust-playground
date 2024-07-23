@@ -1,5 +1,6 @@
-use category::Category;
+pub use category::Category;
 
+#[derive(PartialEq, Debug, Clone)]
 pub struct Product {
   id: u64,
   name: String,
