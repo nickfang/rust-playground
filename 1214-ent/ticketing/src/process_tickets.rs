@@ -373,63 +373,267 @@ pub fn process_tickets() -> Result<(), Box<dyn Error>> {
   for (date, data) in accumulated_data {
     writer.write_record(
       &[
-        data.date.to_string(),
-        data.platinum_vip_2_days.to_string(),
-        data.vip_admission_2_days.to_string(),
-        data.early_bird_2_days.to_string(),
-        data.early_bird_ii_2_days.to_string(),
-        data.early_bird_ii_saturday.to_string(),
-        data.early_bird_ii_sunday.to_string(),
-        data.early_bird_saturday.to_string(),
-        data.early_bird_sunday.to_string(),
-        data.general_admission_2_days.to_string(),
-        data.pit_2_days.to_string(),
-        data.saturday_general_admission.to_string(),
-        data.saturday_pit.to_string(),
-        data.sunday_general_admission.to_string(),
-        data.sunday_pit.to_string(),
-        data.platinum_vip_2_days_value.to_string(),
-        data.vip_admission_2_days_value.to_string(),
-        data.early_bird_2_days_value.to_string(),
-        data.early_bird_ii_2_days_value.to_string(),
-        data.early_bird_ii_saturday_value.to_string(),
-        data.early_bird_ii_sunday_value.to_string(),
-        data.early_bird_saturday_value.to_string(),
-        data.early_bird_sunday_value.to_string(),
-        data.general_admission_2_days_value.to_string(),
-        data.pit_2_days_value.to_string(),
-        data.saturday_general_admission_value.to_string(),
-        data.saturday_pit_value.to_string(),
-        data.sunday_general_admission_value.to_string(),
-        data.sunday_pit_value.to_string(),
-        data.platinum_vip_2_days_total.to_string(),
-        data.vip_admission_2_days_total.to_string(),
-        data.early_bird_2_days_total.to_string(),
-        data.early_bird_ii_2_days_total.to_string(),
-        data.early_bird_ii_saturday_total.to_string(),
-        data.early_bird_ii_sunday_total.to_string(),
-        data.early_bird_saturday_total.to_string(),
-        data.early_bird_sunday_total.to_string(),
-        data.general_admission_2_days_total.to_string(),
-        data.pit_2_days_total.to_string(),
-        data.saturday_general_admission_total.to_string(),
-        data.saturday_pit_total.to_string(),
-        data.sunday_general_admission_total.to_string(),
-        data.sunday_pit_total.to_string(),
-        data.platinum_vip_2_days_total_value.to_string(),
-        data.vip_admission_2_days_total_value.to_string(),
-        data.early_bird_2_days_total_value.to_string(),
-        data.early_bird_ii_2_days_total_value.to_string(),
-        data.early_bird_ii_saturday_total_value.to_string(),
-        data.early_bird_ii_sunday_total_value.to_string(),
-        data.early_bird_saturday_total_value.to_string(),
-        data.early_bird_sunday_total_value.to_string(),
-        data.general_admission_2_days_total_value.to_string(),
-        data.pit_2_days_total_value.to_string(),
-        data.saturday_general_admission_total_value.to_string(),
-        data.saturday_pit_total_value.to_string(),
-        data.sunday_general_admission_total_value.to_string(),
-        data.sunday_pit_total_value.to_string(),
+        date.to_string(),
+        if data.platinum_vip_2_days == 0 {
+          String::new()
+        } else {
+          data.platinum_vip_2_days.to_string()
+        },
+        if data.vip_admission_2_days == 0 {
+          String::new()
+        } else {
+          data.vip_admission_2_days.to_string()
+        },
+        if data.early_bird_2_days == 0 {
+          String::new()
+        } else {
+          data.early_bird_2_days.to_string()
+        },
+        if data.early_bird_ii_2_days == 0 {
+          String::new()
+        } else {
+          data.early_bird_ii_2_days.to_string()
+        },
+        if data.early_bird_ii_saturday == 0 {
+          String::new()
+        } else {
+          data.early_bird_ii_saturday.to_string()
+        },
+        if data.early_bird_ii_sunday == 0 {
+          String::new()
+        } else {
+          data.early_bird_ii_sunday.to_string()
+        },
+        if data.early_bird_saturday == 0 {
+          String::new()
+        } else {
+          data.early_bird_saturday.to_string()
+        },
+        if data.early_bird_sunday == 0 {
+          String::new()
+        } else {
+          data.early_bird_sunday.to_string()
+        },
+        if data.general_admission_2_days == 0 {
+          String::new()
+        } else {
+          data.general_admission_2_days.to_string()
+        },
+        if data.pit_2_days == 0 { String::new() } else { data.pit_2_days.to_string() },
+        if data.saturday_general_admission == 0 {
+          String::new()
+        } else {
+          data.saturday_general_admission.to_string()
+        },
+        if data.saturday_pit == 0 { String::new() } else { data.saturday_pit.to_string() },
+        if data.sunday_general_admission == 0 {
+          String::new()
+        } else {
+          data.sunday_general_admission.to_string()
+        },
+        if data.sunday_pit == 0 { String::new() } else { data.sunday_pit.to_string() },
+        if data.platinum_vip_2_days_value == 0.0 {
+          String::new()
+        } else {
+          data.platinum_vip_2_days_value.to_string()
+        },
+        if data.vip_admission_2_days_value == 0.0 {
+          String::new()
+        } else {
+          data.vip_admission_2_days_value.to_string()
+        },
+        if data.early_bird_2_days_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_2_days_value.to_string()
+        },
+        if data.early_bird_ii_2_days_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_ii_2_days_value.to_string()
+        },
+        if data.early_bird_ii_saturday_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_ii_saturday_value.to_string()
+        },
+        if data.early_bird_ii_sunday_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_ii_sunday_value.to_string()
+        },
+        if data.early_bird_saturday_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_saturday_value.to_string()
+        },
+        if data.early_bird_sunday_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_sunday_value.to_string()
+        },
+        if data.general_admission_2_days_value == 0.0 {
+          String::new()
+        } else {
+          data.general_admission_2_days_value.to_string()
+        },
+        if data.pit_2_days_value == 0.0 {
+          String::new()
+        } else {
+          data.pit_2_days_value.to_string()
+        },
+        if data.saturday_general_admission_value == 0.0 {
+          String::new()
+        } else {
+          data.saturday_general_admission_value.to_string()
+        },
+        if data.saturday_pit_value == 0.0 {
+          String::new()
+        } else {
+          data.saturday_pit_value.to_string()
+        },
+        if data.sunday_general_admission_value == 0.0 {
+          String::new()
+        } else {
+          data.sunday_general_admission_value.to_string()
+        },
+        if data.sunday_pit_value == 0.0 {
+          String::new()
+        } else {
+          data.sunday_pit_value.to_string()
+        },
+        if data.platinum_vip_2_days_total == 0 {
+          String::new()
+        } else {
+          data.platinum_vip_2_days_total.to_string()
+        },
+        if data.vip_admission_2_days_total == 0 {
+          String::new()
+        } else {
+          data.vip_admission_2_days_total.to_string()
+        },
+        if data.early_bird_2_days_total == 0 {
+          String::new()
+        } else {
+          data.early_bird_2_days_total.to_string()
+        },
+        if data.early_bird_ii_2_days_total == 0 {
+          String::new()
+        } else {
+          data.early_bird_ii_2_days_total.to_string()
+        },
+        if data.early_bird_ii_saturday_total == 0 {
+          String::new()
+        } else {
+          data.early_bird_ii_saturday_total.to_string()
+        },
+        if data.early_bird_ii_sunday_total == 0 {
+          String::new()
+        } else {
+          data.early_bird_ii_sunday_total.to_string()
+        },
+        if data.early_bird_saturday_total == 0 {
+          String::new()
+        } else {
+          data.early_bird_saturday_total.to_string()
+        },
+        if data.early_bird_sunday_total == 0 {
+          String::new()
+        } else {
+          data.early_bird_sunday_total.to_string()
+        },
+        if data.general_admission_2_days_total == 0 {
+          String::new()
+        } else {
+          data.general_admission_2_days_total.to_string()
+        },
+        if data.pit_2_days_total == 0 { String::new() } else { data.pit_2_days_total.to_string() },
+        if data.saturday_general_admission_total == 0 {
+          String::new()
+        } else {
+          data.saturday_general_admission_total.to_string()
+        },
+        if data.saturday_pit_total == 0 {
+          String::new()
+        } else {
+          data.saturday_pit_total.to_string()
+        },
+        if data.sunday_general_admission_total == 0 {
+          String::new()
+        } else {
+          data.sunday_general_admission_total.to_string()
+        },
+        if data.sunday_pit_total == 0 { String::new() } else { data.sunday_pit_total.to_string() },
+        if data.platinum_vip_2_days_total_value == 0.0 {
+          String::new()
+        } else {
+          data.platinum_vip_2_days_total_value.to_string()
+        },
+        if data.vip_admission_2_days_total_value == 0.0 {
+          String::new()
+        } else {
+          data.vip_admission_2_days_total_value.to_string()
+        },
+        if data.early_bird_2_days_total_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_2_days_total_value.to_string()
+        },
+        if data.early_bird_ii_2_days_total_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_ii_2_days_total_value.to_string()
+        },
+        if data.early_bird_ii_saturday_total_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_ii_saturday_total_value.to_string()
+        },
+        if data.early_bird_ii_sunday_total_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_ii_sunday_total_value.to_string()
+        },
+        if data.early_bird_saturday_total_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_saturday_total_value.to_string()
+        },
+        if data.early_bird_sunday_total_value == 0.0 {
+          String::new()
+        } else {
+          data.early_bird_sunday_total_value.to_string()
+        },
+        if data.general_admission_2_days_total_value == 0.0 {
+          String::new()
+        } else {
+          data.general_admission_2_days_total_value.to_string()
+        },
+        if data.pit_2_days_total_value == 0.0 {
+          String::new()
+        } else {
+          data.pit_2_days_total_value.to_string()
+        },
+        if data.saturday_general_admission_total_value == 0.0 {
+          String::new()
+        } else {
+          data.saturday_general_admission_total_value.to_string()
+        },
+        if data.saturday_pit_total_value == 0.0 {
+          String::new()
+        } else {
+          data.saturday_pit_total_value.to_string()
+        },
+        if data.sunday_general_admission_total_value == 0.0 {
+          String::new()
+        } else {
+          data.sunday_general_admission_total_value.to_string()
+        },
+        if data.sunday_pit_total_value == 0.0 {
+          String::new()
+        } else {
+          data.sunday_pit_total_value.to_string()
+        },
       ]
     )?;
   }
