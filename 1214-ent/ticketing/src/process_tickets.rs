@@ -3,10 +3,8 @@ use std::error::Error;
 use std::fs::File;
 use std::io::{ BufReader, BufWriter };
 
-use chrono::{ NaiveDate, ParseError };
 use csv::{ ReaderBuilder, WriterBuilder };
 use glob::glob;
-use regex::Regex;
 use serde::{ Deserialize, Deserializer };
 
 fn deserialize_f32_or_zero<'de, D>(deserializer: D) -> Result<f32, D::Error>
@@ -56,7 +54,6 @@ struct TicketData {
 
 #[derive(Debug, Clone)]
 struct NormalizedData {
-  date: String,
   platinum_vip_2_days: u32,
   platinum_vip_2_days_total: u32,
   vip_admission_2_days: u32,
@@ -115,9 +112,8 @@ struct NormalizedData {
   sunday_pit_total_value: f32,
 }
 
-fn initialize_data(date: String) -> NormalizedData {
+fn initialize_data() -> NormalizedData {
   return NormalizedData {
-    date: date,
     platinum_vip_2_days: 0,
     platinum_vip_2_days_total: 0,
     vip_admission_2_days: 0,
@@ -279,12 +275,6 @@ pub fn process_tickets() -> Result<(), Box<dyn Error>> {
   let mut accumulated_data: BTreeMap<String, NormalizedData> = BTreeMap::new();
 
   for file_path in file_paths {
-    // Extract date from filename (adjust based on your naming convention)
-    // let re = Regex::new(r"csvs/(\d{4}-\d{2}-\d{2})")?;
-    // let date = re.captures(file_path.to_str().unwrap()).unwrap().get(1).unwrap().as_str();
-    // let file_name = file_path.file_name().unwrap().to_str().unwrap();
-    // let date_str = &file_name[14..file_name.len() - 4]; // Assuming "ticket_sales_YYYY-MM-DD.csv"
-    // let date = NaiveDate::parse_from_str(date_str, "%Y-%m-%d")?;
     let date: String = file_path.to_str().unwrap().chars().skip(9).take(10).collect();
 
     let file = File::open(&file_path)?;
@@ -298,7 +288,7 @@ pub fn process_tickets() -> Result<(), Box<dyn Error>> {
         let data = e.get_mut();
         collect_data(data, record.clone());
       } else {
-        let data = initialize_data(date.to_string());
+        let data = initialize_data();
         accumulated_data.insert(date.to_string(), data);
       }
     }
@@ -311,62 +301,62 @@ pub fn process_tickets() -> Result<(), Box<dyn Error>> {
   writer.write_record(
     &[
       "Date",
-      "2 Day Platinum Vip",
-      "2 Day Vip Admission",
-      "Early Bird 2 Days",
-      "Early Bird II 2 Days",
-      "Early Bird II Saturday",
-      "Early Bird II Sunday",
-      "Early Bird Saturday",
-      "Early Bird Sunday",
-      "General Admission 2 Days",
+      "2 Day Platinum",
+      "2 Day VIP",
+      "Gen 2 Days",
+      "Gen Saturday",
+      "Gen Sunday",
       "Pit 2 Days",
-      "Saturday General Admission",
-      "Saturday Pit",
-      "Sunday General Admission",
-      "Sunday Pit",
-      "2 Day Platinum Vip Value",
-      "2 Day Vip Admission Value",
-      "Early Bird 2 Days Value",
-      "Early Bird II 2 Days Value",
-      "Early Bird II Saturday Value",
-      "Early Bird II Sunday Value",
-      "Early Bird Saturday Value",
-      "Early Bird Sunday Value",
-      "General Admission 2 Days Value",
+      "Pit Saturday",
+      "Pit Sunday",
+      "EB II 2 Days",
+      "EB II Saturday",
+      "EB II Sunday",
+      "EB 2 Days",
+      "EB Saturday",
+      "EB Sunday",
+      "2 Day Platinum Value",
+      "2 Day VIP Value",
+      "Gen 2 Days Value",
+      "Gen Saturday Value",
+      "Gen Sunday Value",
       "Pit 2 Days Value",
-      "Saturday General Admission Value",
-      "Saturday Pit Value",
-      "Sunday General Admission Value",
-      "Sunday Pit Value",
-      "2 Day Platinum Vip Total",
-      "2 Day Vip Admission Total",
-      "Early Bird 2 Days Total",
-      "Early Bird II 2 Days Total",
-      "Early Bird II Saturday Total",
-      "Early Bird II Sunday Total",
-      "Early Bird Saturday Total",
-      "Early Bird Sunday Total",
-      "General Admission 2 Days Total",
+      "Pit Saturday Value",
+      "Pit Sunday Value",
+      "EB II 2 Days Value",
+      "EB II Saturday Value",
+      "EB II Sunday Value",
+      "EB 2 Days Value",
+      "EB Saturday Value",
+      "EB Sunday Value",
+      "2 Day Platinum Total",
+      "2 Day VIP Total",
+      "Gen 2 Days Total",
+      "Gen Saturday Total",
+      "Gen Sunday Total",
       "Pit 2 Days Total",
-      "Saturday General Admission Total",
-      "Saturday Pit Total",
-      "Sunday General Admission Total",
-      "Sunday Pit Total",
-      "2 Day Platinum Vip Total Value",
-      "2 Day Vip Admission Total Value",
-      "Early Bird 2 Days Total Value",
-      "Early Bird II 2 Days Total Value",
-      "Early Bird II Saturday Total Value",
-      "Early Bird II Sunday Total Value",
-      "Early Bird Saturday Total Value",
-      "Early Bird Sunday Total Value",
-      "General Admission 2 Days Total Value",
+      "Pit Saturday Total",
+      "Pit Sunday Total",
+      "EB II 2 Days Total",
+      "EB II Saturday Total",
+      "EB II Sunday Total",
+      "EB 2 Days Total",
+      "EB Saturday Total",
+      "EB Sunday Total",
+      "2 Day Platinum Total Value",
+      "2 Day VIP Total Value",
+      "Gen 2 Days Total Value",
+      "Gen Saturday Total Value",
+      "Gen Sunday Total Value",
       "Pit 2 Days Total Value",
-      "Saturday General Admission Total Value",
-      "Saturday Pit Total Value",
-      "Sunday General Admission Total Value",
-      "Sunday Pit Total Value",
+      "Pit Saturday Total Value",
+      "Pit Sunday Total Value",
+      "EB II 2 Days Total Value",
+      "EB II Saturday Total Value",
+      "EB II Sunday Total Value",
+      "EB 2 Days Total Value",
+      "EB Saturday Total Value",
+      "EB Sunday Total Value",
     ]
   )?;
 
@@ -383,60 +373,60 @@ pub fn process_tickets() -> Result<(), Box<dyn Error>> {
         date.to_string(),
         empty_string_if_zero_u32(data.platinum_vip_2_days),
         empty_string_if_zero_u32(data.vip_admission_2_days),
-        empty_string_if_zero_u32(data.early_bird_2_days),
+        empty_string_if_zero_u32(data.general_admission_2_days),
+        empty_string_if_zero_u32(data.saturday_general_admission),
+        empty_string_if_zero_u32(data.sunday_general_admission),
+        empty_string_if_zero_u32(data.pit_2_days),
+        empty_string_if_zero_u32(data.saturday_pit),
+        empty_string_if_zero_u32(data.sunday_pit),
         empty_string_if_zero_u32(data.early_bird_ii_2_days),
         empty_string_if_zero_u32(data.early_bird_ii_saturday),
         empty_string_if_zero_u32(data.early_bird_ii_sunday),
+        empty_string_if_zero_u32(data.early_bird_2_days),
         empty_string_if_zero_u32(data.early_bird_saturday),
         empty_string_if_zero_u32(data.early_bird_sunday),
-        empty_string_if_zero_u32(data.general_admission_2_days),
-        empty_string_if_zero_u32(data.pit_2_days),
-        empty_string_if_zero_u32(data.saturday_general_admission),
-        empty_string_if_zero_u32(data.saturday_pit),
-        empty_string_if_zero_u32(data.sunday_general_admission),
-        empty_string_if_zero_u32(data.sunday_pit),
         empty_string_if_zero_f32(data.platinum_vip_2_days_value),
         empty_string_if_zero_f32(data.vip_admission_2_days_value),
-        empty_string_if_zero_f32(data.early_bird_2_days_value),
+        empty_string_if_zero_f32(data.general_admission_2_days_value),
+        empty_string_if_zero_f32(data.saturday_general_admission_value),
+        empty_string_if_zero_f32(data.sunday_general_admission_value),
+        empty_string_if_zero_f32(data.pit_2_days_value),
+        empty_string_if_zero_f32(data.saturday_pit_value),
+        empty_string_if_zero_f32(data.sunday_pit_value),
         empty_string_if_zero_f32(data.early_bird_ii_2_days_value),
         empty_string_if_zero_f32(data.early_bird_ii_saturday_value),
         empty_string_if_zero_f32(data.early_bird_ii_sunday_value),
+        empty_string_if_zero_f32(data.early_bird_2_days_value),
         empty_string_if_zero_f32(data.early_bird_saturday_value),
         empty_string_if_zero_f32(data.early_bird_sunday_value),
-        empty_string_if_zero_f32(data.general_admission_2_days_value),
-        empty_string_if_zero_f32(data.pit_2_days_value),
-        empty_string_if_zero_f32(data.saturday_general_admission_value),
-        empty_string_if_zero_f32(data.saturday_pit_value),
-        empty_string_if_zero_f32(data.sunday_general_admission_value),
-        empty_string_if_zero_f32(data.sunday_pit_value),
         empty_string_if_zero_u32(data.platinum_vip_2_days_total),
         empty_string_if_zero_u32(data.vip_admission_2_days_total),
-        empty_string_if_zero_u32(data.early_bird_2_days_total),
+        empty_string_if_zero_u32(data.general_admission_2_days_total),
+        empty_string_if_zero_u32(data.saturday_general_admission_total),
+        empty_string_if_zero_u32(data.sunday_general_admission_total),
+        empty_string_if_zero_u32(data.pit_2_days_total),
+        empty_string_if_zero_u32(data.saturday_pit_total),
+        empty_string_if_zero_u32(data.sunday_pit_total),
         empty_string_if_zero_u32(data.early_bird_ii_2_days_total),
         empty_string_if_zero_u32(data.early_bird_ii_saturday_total),
         empty_string_if_zero_u32(data.early_bird_ii_sunday_total),
+        empty_string_if_zero_u32(data.early_bird_2_days_total),
         empty_string_if_zero_u32(data.early_bird_saturday_total),
         empty_string_if_zero_u32(data.early_bird_sunday_total),
-        empty_string_if_zero_u32(data.general_admission_2_days_total),
-        empty_string_if_zero_u32(data.pit_2_days_total),
-        empty_string_if_zero_u32(data.saturday_general_admission_total),
-        empty_string_if_zero_u32(data.saturday_pit_total),
-        empty_string_if_zero_u32(data.sunday_general_admission_total),
-        empty_string_if_zero_u32(data.sunday_pit_total),
         empty_string_if_zero_f32(data.platinum_vip_2_days_total_value),
         empty_string_if_zero_f32(data.vip_admission_2_days_total_value),
-        empty_string_if_zero_f32(data.early_bird_2_days_total_value),
+        empty_string_if_zero_f32(data.general_admission_2_days_total_value),
+        empty_string_if_zero_f32(data.saturday_general_admission_total_value),
+        empty_string_if_zero_f32(data.sunday_general_admission_total_value),
+        empty_string_if_zero_f32(data.pit_2_days_total_value),
+        empty_string_if_zero_f32(data.saturday_pit_total_value),
+        empty_string_if_zero_f32(data.sunday_pit_total_value),
         empty_string_if_zero_f32(data.early_bird_ii_2_days_total_value),
         empty_string_if_zero_f32(data.early_bird_ii_saturday_total_value),
         empty_string_if_zero_f32(data.early_bird_ii_sunday_total_value),
+        empty_string_if_zero_f32(data.early_bird_2_days_total_value),
         empty_string_if_zero_f32(data.early_bird_saturday_total_value),
         empty_string_if_zero_f32(data.early_bird_sunday_total_value),
-        empty_string_if_zero_f32(data.general_admission_2_days_total_value),
-        empty_string_if_zero_f32(data.pit_2_days_total_value),
-        empty_string_if_zero_f32(data.saturday_general_admission_total_value),
-        empty_string_if_zero_f32(data.saturday_pit_total_value),
-        empty_string_if_zero_f32(data.sunday_general_admission_total_value),
-        empty_string_if_zero_f32(data.sunday_pit_total_value),
       ]
     )?;
   }
