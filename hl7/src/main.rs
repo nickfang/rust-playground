@@ -40,13 +40,18 @@ impl Composite {
 type HL7Message = HashMap<String, Composite>;
 
 fn main() {
-  let hl7Example2 = "MSH|^~\\&|Lab|Lab|Lab|Lab|202503061432||ORU^R01|202503061432|";
-  let hl7Example =
+  let hl7Example2 = r"MSH|^~\&|Lab|Lab|Lab|Lab|202503061432||ORU^R01|202503061432|";
+  let hl7Example1 =
     "MSH|^~|EPIC|EPICADT|iFW|SMSADT|199912271408|CHARRIS|ADT^A04|1817457|D|2.5|
 PID||0493575^^^2^ID 1|454721||DOE^JOHN^^^^|DOE^JOHN^^^^|19480203|M||B|254 MYSTREET AVE^^MYTOWN^OH^44123^USA||(216)123-4567|||M|NON|400003403~1129086|
 NK1||ROE^MARIE^^^^|SPO||(216)123-4567||EC|||||||||||||||||||||||||||
 PV1||O|168 ~219~C~PMA^^^^^^^^^||||277^ALLEN MYLASTNAME^BONNIE^^^^|||||||||| ||2688684|||||||||||||||||||||||||199912271408||||||002376853";
-  println!("{}", hl7ToJson(hl7Example2.to_string()));
+  let hl7Example =
+    r"MSH|^~\&|Sender\|App|Sender\^Facility|Receiver\&App|ReceiverFacility|202503160201||ORU^R01|MSG00001|P|2.5
+PID|1||PatientID123\^ABC^^^Hospital\|ID||Patient\^Name\^With\^Carets||19700101|M|||123 Main St\^Any\|town\^TX^78704
+OBR|1||Lab\&Order\^123|||||||||||||||||||||||
+OBX|1|ST|ObservationID|This observation value contains all escapes: \| and \^ and \&|||||";
+  println!("{}", hl7ToJson(hl7Example.to_string()));
 }
 
 fn handleEscapes(hl7: String) -> String {
@@ -59,7 +64,10 @@ fn handleEscapes(hl7: String) -> String {
 
 #[test]
 fn test_handle_escapes() {
-  let mut hl7 = r"MSH|^~\\&|Lab|Lab|Lab|Lab|202503061432||ORU^R01|202503061432|".to_string();
+  // split for each delimiter | ^ &
+  // check end of each string for escape character |
+
+  let mut hl7 = r"MSH|^~\&|Lab|Lab|Lab|Lab|202503061432||ORU^R01|202503061432|".to_string();
   let mut new_hl7 = handleEscapes(hl7);
   println!("{}", new_hl7);
   assert_eq!(new_hl7, r"MSH|^~\&|Lab|Lab|Lab|Lab|202503061432||ORU^R01|202503061432|");
@@ -69,13 +77,49 @@ fn test_handle_escapes() {
   assert_eq!(new_hl7, r"|^&~");
 }
 
+#[test]
+fn test_escaped_pipes() {
+  let hl7 =
+    r"MSH|^~\&|Lab\|More|Lab|Lab\|Extra|Lab|202503061432||ORU^R01|202503061432|".to_string();
+  let json = hl7ToJson(hl7);
+  assert!(json.contains("Lab|More")); // Check if escaped pipe was properly handled
+  assert!(json.contains("Lab|Extra")); // Check another escaped pipe
+
+  // Test more complex escaping scenarios
+  let hl7_complex =
+    r"MSH|^~\&|Lab\|More\^Test|Field\|With\^Multiple\|Escapes|Simple\^With\^Carets|Field\&With\&Ampersands".to_string();
+  let json_complex = hl7ToJson(hl7_complex);
+  assert!(json_complex.contains("Lab|More^Test")); // Check escaped pipe with caret
+  assert!(json_complex.contains("Field|With^Multiple|Escapes")); // Check multiple escapes
+  assert!(json_complex.contains("Simple^With^Carets")); // Check caret handling
+  assert!(json_complex.contains("Field&With&Ampersands")); // Check ampersand handling
+}
+
 fn hl7ToJson(message: String) -> String {
   let mut message_map = HL7Message::new();
 
+  // First split on pipes
   let composites = message
     .split("|")
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
+
+  // Handle escaped pipes by joining elements
+  let mut merged_composites = Vec::new();
+  let mut i = 0;
+  while i < composites.len() {
+    let mut current = composites[i].clone();
+    while current.ends_with(r"\") && i + 1 < composites.len() {
+      current.pop(); // Remove the backslash
+      current.push('|');
+      current.push_str(&composites[i + 1]);
+      i += 1;
+    }
+    merged_composites.push(handleEscapes(current));
+    i += 1;
+  }
+  let composites = merged_composites;
+
   for (composite_index, composite) in composites.iter().enumerate() {
     message_map.insert(composite_index.clone().to_string(), Composite::new("".to_string()));
     if composite.is_empty() {
@@ -85,6 +129,23 @@ fn hl7ToJson(message: String) -> String {
       .split("^")
       .map(|s| s.to_string())
       .collect::<Vec<String>>();
+
+    // Handle escaped carets
+    let mut merged_subcomposites = Vec::new();
+    let mut i = 0;
+    while i < subcomposites.len() {
+      let mut current = subcomposites[i].clone();
+      while current.ends_with(r"\") && i + 1 < subcomposites.len() {
+        current.pop(); // Remove the backslash
+        current.push('^');
+        current.push_str(&subcomposites[i + 1]);
+        i += 1;
+      }
+      merged_subcomposites.push(handleEscapes(current));
+      i += 1;
+    }
+    let subcomposites = merged_subcomposites;
+
     if subcomposites.len() == 1 {
       message_map.get_mut(&composite_index.to_string()).unwrap().composite_value =
         composite.to_string();
@@ -105,6 +166,23 @@ fn hl7ToJson(message: String) -> String {
         .split("&")
         .map(|s| s.to_string())
         .collect::<Vec<String>>();
+
+      // Handle escaped ampersands
+      let mut merged_subsubcomposites = Vec::new();
+      let mut i = 0;
+      while i < subsubcomposites.len() {
+        let mut current = subsubcomposites[i].clone();
+        while current.ends_with(r"\") && i + 1 < subsubcomposites.len() {
+          current.pop(); // Remove the backslash
+          current.push('&');
+          current.push_str(&subsubcomposites[i + 1]);
+          i += 1;
+        }
+        merged_subsubcomposites.push(handleEscapes(current));
+        i += 1;
+      }
+      let subsubcomposites = merged_subsubcomposites;
+
       if subsubcomposites.len() == 1 {
         message_map
           .get_mut(&composite_index.to_string())
